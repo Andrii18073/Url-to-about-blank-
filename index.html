@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -114,48 +113,47 @@
 
             let url = document.getElementById('urlInput').value.trim();
 
-            // Automatically add https:// if missing
             if (!/^https?:\/\//i.test(url)) {
                 url = 'https://' + url;
             }
 
-            // Open a blank new tab
             const win = window.open('about:blank', '_blank');
 
             if (win) {
-                // Construct full screen iframe code with zero margins/padding
-                const htmlContent = `
-                    <!DOCTYPE html>
-                    <html style="margin:0; padding:0; width:100%; height:100%; overflow:hidden;">
-                    <head>
-                        <title>about:blank</title>
-                        <style>
-                            html, body {
-                                margin: 0;
-                                padding: 0;
-                                width: 100%;
-                                height: 100%;
-                                overflow: hidden;
-                                background-color: #000;
-                            }
-                            iframe {
-                                border: none;
-                                width: 100%;
-                                height: 100%;
-                                display: block;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <iframe src="${url}"></iframe>
-                    </body>
-                    </html>
-                `;
+                const doc = win.document;
+                
+                // Set page title
+                doc.title = 'about:blank';
 
-                // Write content into the new tab
-                win.document.open();
-                win.document.write(htmlContent);
-                win.document.close();
+                // Reset standard styles on root element and body
+                doc.documentElement.style.margin = '0';
+                doc.documentElement.style.padding = '0';
+                doc.documentElement.style.width = '100vw';
+                doc.documentElement.style.height = '100vh';
+                doc.documentElement.style.overflow = 'hidden';
+
+                doc.body.style.margin = '0';
+                doc.body.style.padding = '0';
+                doc.body.style.width = '100vw';
+                doc.body.style.height = '100vh';
+                doc.body.style.overflow = 'hidden';
+                doc.body.style.backgroundColor = 'transparent';
+
+                // Create iframe dynamically with absolute viewport dimensions
+                const iframe = doc.createElement('iframe');
+                iframe.src = url;
+                iframe.style.width = '100vw';
+                iframe.style.height = '100vh';
+                iframe.style.border = 'none';
+                iframe.style.outline = 'none';
+                iframe.style.margin = '0';
+                iframe.style.padding = '0';
+                iframe.style.display = 'block';
+                iframe.style.position = 'fixed';
+                iframe.style.top = '0';
+                iframe.style.left = '0';
+
+                doc.body.appendChild(iframe);
             } else {
                 alert('Pop-up blocked! Please allow pop-ups for this page to work.');
             }
