@@ -120,40 +120,45 @@
             const win = window.open('about:blank', '_blank');
 
             if (win) {
-                const doc = win.document;
-                
-                // Set page title
-                doc.title = 'about:blank';
+                // Strict raw markup stream with !important declarations to bypass standard user-agent scaling
+                const rawMarkup = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>about:blank</title>
+<style>
+    * {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        outline: 0 !important;
+        box-sizing: border-box !important;
+    }
+    html, body {
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+        background: transparent !important;
+    }
+    iframe {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: block !important;
+    }
+</style>
+</head>
+<body>
+<iframe src="${url}"></iframe>
+</body>
+</html>`;
 
-                // Reset standard styles on root element and body
-                doc.documentElement.style.margin = '0';
-                doc.documentElement.style.padding = '0';
-                doc.documentElement.style.width = '100vw';
-                doc.documentElement.style.height = '100vh';
-                doc.documentElement.style.overflow = 'hidden';
-
-                doc.body.style.margin = '0';
-                doc.body.style.padding = '0';
-                doc.body.style.width = '100vw';
-                doc.body.style.height = '100vh';
-                doc.body.style.overflow = 'hidden';
-                doc.body.style.backgroundColor = 'transparent';
-
-                // Create iframe dynamically with absolute viewport dimensions
-                const iframe = doc.createElement('iframe');
-                iframe.src = url;
-                iframe.style.width = '100vw';
-                iframe.style.height = '100vh';
-                iframe.style.border = 'none';
-                iframe.style.outline = 'none';
-                iframe.style.margin = '0';
-                iframe.style.padding = '0';
-                iframe.style.display = 'block';
-                iframe.style.position = 'fixed';
-                iframe.style.top = '0';
-                iframe.style.left = '0';
-
-                doc.body.appendChild(iframe);
+                win.document.open();
+                win.document.write(rawMarkup);
+                win.document.close();
             } else {
                 alert('Pop-up blocked! Please allow pop-ups for this page to work.');
             }
